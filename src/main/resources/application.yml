@@ -1,0 +1,59 @@
+# Spring Boot Configuration
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:claims-service}
+  r2dbc:
+    url: ${DBURL:r2dbc:postgresql://localhost:5432/orders}
+    username: ${DBUSER:postgres}
+    password: ${DBPASS:Liberty@123}
+  logging:
+    level:
+      org.springframework.r2dbc: DEBUG
+      org.springframework.data.r2dbc: DEBUG
+      io.r2dbc.postgresql: DEBUG
+
+# OpenTelemetry Configuration
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTLP_ENDPOINT:http://localhost:4317} 
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name} 
+
+# Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: ${CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE:10}
+        minimumNumberOfCalls: ${CIRCUIT_BREAKER_MINIMUM_NUMBER_OF_CALLS:5}
+        permittedNumberOfCallsInHalfOpenState: ${CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE:3}
+        waitDurationInOpenState: ${CIRCUIT_BREAKER_WAIT_DURATION_IN_OPEN_STATE:5s}
+        failureRateThreshold: ${CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD:50}
+        eventConsumerBufferSize: ${CIRCUIT_BREAKER_EVENT_CONSUMER_BUFFER_SIZE:10}
+    instances:
+      claimService:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: ${RETRY_MAX_ATTEMPTS:3}
+        waitDuration: ${RETRY_WAIT_DURATION:1s}
+        enableExponentialBackoff: ${RETRY_ENABLE_EXPONENTIAL_BACKOFF:true}
+        exponentialBackoffMultiplier: ${RETRY_EXPONENTIAL_BACKOFF_MULTIPLIER:2}
+        exponentialBackoffMaxDuration: ${RETRY_EXPONENTIAL_BACKOFF_MAX_DURATION:2s}
+        retryExceptions:
+          - org.springframework.dao.DataAccessException
+          - org.springframework.dao.TransientDataAccessException
+          - org.springframework.dao.NonTransientDataAccessException
+    instances:
+      claimService:
+        baseConfig: default
