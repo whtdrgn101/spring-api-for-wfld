@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=claims-service
+      - DBURL=r2dbc:postgresql://host.docker.internal:5432/orders
+      - DBUSER=postgres
+      - DBPASS=${DBPASS:P@sSw0rdz}
+      - OTLP_ENDPOINT=${OTLP_ENDPOINT:http://host.docker.internal:4317}
+      - PORT=8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+      - otel-collector
+    networks:
+      - claims-network
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    networks:
+      - claims-network
+
+volumes:
+  postgres_data:
+
+networks:
+  claims-network:
+    driver: bridge 

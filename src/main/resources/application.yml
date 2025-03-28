@@ -1,3 +1,7 @@
+# Server Configuration
+server:
+  port: ${PORT:8080}
+
 # Spring Boot Configuration
 spring:
   application:
@@ -5,28 +9,32 @@ spring:
   r2dbc:
     url: ${DBURL:r2dbc:postgresql://localhost:5432/orders}
     username: ${DBUSER:postgres}
-    password: ${DBPASS:Liberty@123}
+    password: ${DBPASS:P@sSw0rdz}
   logging:
     level:
       org.springframework.r2dbc: DEBUG
       org.springframework.data.r2dbc: DEBUG
       io.r2dbc.postgresql: DEBUG
+      com.wfld.claims.demo: DEBUG
 
 # OpenTelemetry Configuration
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
   otlp:
     tracing:
-      endpoint: ${OTLP_ENDPOINT:http://localhost:4317} 
+      endpoint: ${OTLP_ENDPOINT:http://localhost:4317}
+  metrics:
+    tags:
+      application: ${spring.application.name}
   endpoints:
     web:
       exposure:
         include: health,metrics,prometheus
-  metrics:
-    tags:
-      application: ${spring.application.name} 
+  endpoint:
+    health:
+      show-details: always
 
 # Resilience4j Configuration
 resilience4j:
