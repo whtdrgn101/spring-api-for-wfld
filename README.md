@@ -2,6 +2,18 @@
 
 This project serves as a reference implementation for building well organized, scalable, and maintainable RESTful API's in Java using the SpringBoot framework.  It follows SpringBoot best practice for separation of concerns and leverages OpenTelemetry and Reseliency4j to make the API's supportable and fault-tolerant.  
 
+### Features
+
+1. Separation of concerns around SpringBoot components (Controllers, Services, and Repositories)
+2. Resilency in data access layer with retry and circuit breaker pattern implemented (Resiliency4j)
+3. Logging and monitoring supported through OpenTelemetry
+4. Reactive IO pattern for scalability
+5. Supports containerization by design
+6. Security through SpringSecurity framework (TODO)
+7. CI/CD through Azure DevOps pipelines (TODO)
+8. Developed on Java 21 which is latest LTS version of java as of April 2025
+9. JUnit for unit testing (Constructor-based DI for Spring framework components over Autowired)
+
 ### Project Organization:
 
 The project package structure is organized around the resources being served by the API.  This lays out the packages as follows:
