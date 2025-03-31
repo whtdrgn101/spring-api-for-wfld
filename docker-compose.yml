@@ -15,7 +15,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      - db
       - otel-collector
     networks:
       - claims-network
