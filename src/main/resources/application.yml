@@ -31,6 +31,8 @@ spring:
               - openid
               - profile
               - email
+              - can-request-claims
+              - can-submit-claims
 
 # OpenTelemetry Configuration
 management:

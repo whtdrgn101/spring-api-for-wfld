@@ -48,7 +48,7 @@ public class SecurityConfig {
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-            .scope("openid", "profile", "email")
+            .scope("openid", "profile", "email", "can-request-claims", "can-submit-claims")
             .authorizationUri(issuerUri + "/as/authorization.oauth2")
             .tokenUri(issuerUri + "/as/token.oauth2")
             .userInfoUri(issuerUri + "/idp/userinfo.openid")
