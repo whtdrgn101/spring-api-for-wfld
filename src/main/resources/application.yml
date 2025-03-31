@@ -7,9 +7,9 @@ spring:
   application:
     name: ${SPRING_APPLICATION_NAME:claims-service}
   r2dbc:
-    url: ${DBURL:r2dbc:postgresql://localhost:5432/orders}
-    username: ${DBUSER:postgres}
-    password: ${DBPASS:P@sSw0rdz}
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/orders}
+    username: ${SPRING_R2DBC_USERNAME:postgres}
+    password: ${SPRING_R2DBC_PASSWORD:postgres}
   logging:
     level:
       org.springframework.r2dbc: DEBUG
