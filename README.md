@@ -6,13 +6,15 @@ This project serves as a reference implementation for building well organized, s
 
 The project package structure is organized around the resources being served by the API.  This lays out the packages as follows:
 
-- com.wfld.*DOMAIN*.*APP_NAME*
-  |_> *RESOURCE*
-    |_> controllers
-    |_> entities
-    |_> repositories
-    |_> services
-  |_> config
+```
+    - com.wfld.*DOMAIN*.*APP_NAME*
+      |_> *RESOURCE*
+        |_> controllers
+        |_> entities
+        |_> repositories
+        |_> services
+      |_> config
+```
 
 ### Reference Documentation
 For further reference, please consider the following sections:
