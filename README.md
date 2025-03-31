@@ -25,6 +25,8 @@ For further reference, please consider the following sections:
 * [Spring Reactive Web](https://docs.spring.io/spring-boot/3.4.3/reference/web/reactive.html)
 * [OAuth2 Client](https://docs.spring.io/spring-boot/3.4.3/reference/web/spring-security.html#web.security.oauth2.client)
 * [Spring Data R2DBC](https://docs.spring.io/spring-boot/3.4.3/reference/data/sql.html#data.sql.r2dbc)
+* [Open Telemetry Starter Doc](https://opentelemetry.io/docs/languages/java/getting-started/)
+* [Resilency for Java Starter Doc](https://resilience4j.readme.io/docs/getting-started)
 
 ### Guides
 The following guides illustrate how to use some features concretely:
