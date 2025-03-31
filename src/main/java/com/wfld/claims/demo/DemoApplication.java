@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 	"com.wfld.claims.demo.claim.controllers",
 	"com.wfld.claims.demo.claim.repositories", 
 	"com.wfld.claims.demo.claim.services",
-	"com.wfld.claims.demo.config"
+	"com.wfld.claims.demo.config",
+	"com.wfld.claims.demo.controllers"
 })
 @EntityScan(basePackages = {"com.wfld.claims.demo.claim.entities"})
 public class DemoApplication {

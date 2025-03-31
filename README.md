@@ -9,7 +9,7 @@ This project serves as a reference implementation for building well organized, s
 3. Logging and monitoring supported through OpenTelemetry
 4. Reactive IO pattern for scalability
 5. Supports containerization by design
-6. Security through SpringSecurity framework (TODO)
+6. Security through SpringSecurity framework (Stubbed but needs wired into Westfield PING)
 7. CI/CD through Azure DevOps pipelines (TODO)
 8. Developed on Java 21 which is latest LTS version of java as of April 2025
 9. JUnit for unit testing (Constructor-based DI for Spring framework components over Autowired)

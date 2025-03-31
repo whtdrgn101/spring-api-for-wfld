@@ -1,0 +1,20 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          ping:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            issuer-uri: http://localhost:8080
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb
+    username: sa
+    password: 
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    com.wfld.claims.demo: DEBUG
+    io.r2dbc: DEBUG 

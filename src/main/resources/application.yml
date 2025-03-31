@@ -16,22 +16,40 @@ spring:
       org.springframework.data.r2dbc: DEBUG
       io.r2dbc.postgresql: DEBUG
       com.wfld.claims.demo: DEBUG
+      org.springframework.security: DEBUG
+      org.springframework.web: DEBUG
+      io.opentelemetry: DEBUG
+  security:
+    oauth2:
+      client:
+        registration:
+          ping:
+            client-id: ${PING_CLIENT_ID:your-client-id}
+            client-secret: ${PING_CLIENT_SECRET:your-client-secret}
+            issuer-uri: ${PING_ISSUER_URI:https://your-pingfederate-server}
+            scope:
+              - openid
+              - profile
+              - email
 
 # OpenTelemetry Configuration
 management:
   tracing:
     sampling:
-      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+      probability: 1.0
   otlp:
     tracing:
       endpoint: ${OTLP_ENDPOINT:http://localhost:4317}
   metrics:
     tags:
       application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true
   endpoints:
     web:
       exposure:
-        include: health,metrics,prometheus
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: always
@@ -39,29 +57,44 @@ management:
 # Resilience4j Configuration
 resilience4j:
   circuitbreaker:
-    configs:
-      default:
-        slidingWindowSize: ${CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE:10}
-        minimumNumberOfCalls: ${CIRCUIT_BREAKER_MINIMUM_NUMBER_OF_CALLS:5}
-        permittedNumberOfCallsInHalfOpenState: ${CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE:3}
-        waitDurationInOpenState: ${CIRCUIT_BREAKER_WAIT_DURATION_IN_OPEN_STATE:5s}
-        failureRateThreshold: ${CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD:50}
-        eventConsumerBufferSize: ${CIRCUIT_BREAKER_EVENT_CONSUMER_BUFFER_SIZE:10}
     instances:
-      claimService:
-        baseConfig: default
+      getAllClaims:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+      createClaim:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
   retry:
-    configs:
-      default:
-        maxAttempts: ${RETRY_MAX_ATTEMPTS:3}
-        waitDuration: ${RETRY_WAIT_DURATION:1s}
-        enableExponentialBackoff: ${RETRY_ENABLE_EXPONENTIAL_BACKOFF:true}
-        exponentialBackoffMultiplier: ${RETRY_EXPONENTIAL_BACKOFF_MULTIPLIER:2}
-        exponentialBackoffMaxDuration: ${RETRY_EXPONENTIAL_BACKOFF_MAX_DURATION:2s}
+    instances:
+      getAllClaims:
+        maxAttempts: 3
+        waitDuration: 100
+        multiplier: 2
+        maxDuration: 1000
         retryExceptions:
           - org.springframework.dao.DataAccessException
-          - org.springframework.dao.TransientDataAccessException
-          - org.springframework.dao.NonTransientDataAccessException
-    instances:
-      claimService:
-        baseConfig: default
+      createClaim:
+        maxAttempts: 3
+        waitDuration: 100
+        multiplier: 2
+        maxDuration: 1000
+        retryExceptions:
+          - org.springframework.dao.DataAccessException
+
+opentelemetry:
+  config:
+    trace-id-ratio-based: 1.0
+    otel:
+      exporter:
+        otlp:
+          endpoint: ${OTLP_ENDPOINT:http://localhost:4317}
+      service:
+        name: ${spring.application.name}
+      propagators: b3
+      resource:
+        attributes:
+          service.name: ${spring.application.name}
