@@ -26,7 +26,6 @@ spring:
           ping:
             client-id: ${PING_CLIENT_ID:your-client-id}
             client-secret: ${PING_CLIENT_SECRET:your-client-secret}
-            authorization-grant-type: client_credentials
             issuer-uri: ${PING_ISSUER_URI:https://your-pingfederate-server}
             scope:
               - openid
