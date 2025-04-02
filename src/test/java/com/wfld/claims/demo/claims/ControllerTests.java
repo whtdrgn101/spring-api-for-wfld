@@ -9,8 +9,7 @@ import com.wfld.claims.demo.claim.entities.ClaimRequest;
 import com.wfld.claims.demo.claim.controllers.ClaimController;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
 @WebFluxTest(ClaimController.class)
 @Import({TestSecurityConfig.class, TestConfig.class})
@@ -39,17 +38,14 @@ public class ControllerTests {
         request.setAmount(1000.00);
         request.setStatusId(1L);
         
-        // Create a mock JWT token with the required scope
         Jwt jwt = Jwt.withTokenValue("mock-token")
             .header("alg", "none")
-            .claim("scope", "can-request-claims")
+            .subject("sub")
             .build();
 
-        JwtAuthenticationToken token = new JwtAuthenticationToken(jwt);
-
-        webClient.post().uri("/api/claims")
+        webClient.mutateWith(mockJwt().jwt(jwt))
+            .post().uri("/api/claims")
             .bodyValue(request)
-            .headers(headers -> headers.setBearerAuth(token.getToken().getTokenValue()))
             .headers(headers -> headers.setContentType(MediaType.APPLICATION_JSON))
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
@@ -63,17 +59,15 @@ public class ControllerTests {
         request.setStatusId(1L);
         request.setCreatedBy("test");
 
-        // Create a mock JWT token with the required scope
         Jwt jwt = Jwt.withTokenValue("mock-token")
             .header("alg", "none")
+            .subject("sub")
             .claim("scope", "can-submit-claims")
             .build();
 
-        JwtAuthenticationToken token = new JwtAuthenticationToken(jwt);
-
-        webClient.post().uri("/api/claims")
+        webClient.mutateWith(mockJwt().jwt(jwt))
+            .post().uri("/api/claims")
             .bodyValue(request)
-            .headers(headers -> headers.setBearerAuth(token.getToken().getTokenValue()))
             .headers(headers -> headers.setContentType(MediaType.APPLICATION_JSON))
             .accept(MediaType.APPLICATION_JSON)
             .exchange()

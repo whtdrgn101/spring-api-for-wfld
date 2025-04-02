@@ -2,6 +2,7 @@ package com.wfld.claims.demo.claims;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -11,9 +12,13 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.List;
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class TestSecurityConfig {
 
     @Bean
@@ -43,11 +48,21 @@ public class TestSecurityConfig {
     @Bean
     public ReactiveJwtDecoder jwtDecoder() {
         return token -> {
-            // For test purposes, we'll accept any token and create a mock JWT
             return Mono.just(Jwt.withTokenValue(token)
                 .header("alg", "none")
-                .claim("scope", "can-submit-claims")
+                .subject("sub")
+                .claim("scope", token)
                 .build());
         };
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            String scope = jwt.getClaimAsString("scope");
+            return List.of(new SimpleGrantedAuthority("SCOPE_" + scope));
+        });
+        return jwtConverter;
     }
 } 

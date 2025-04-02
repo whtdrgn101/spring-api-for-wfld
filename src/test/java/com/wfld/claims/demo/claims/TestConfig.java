@@ -4,11 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import com.wfld.claims.demo.claim.services.ClaimService;
+import com.wfld.claims.demo.claim.entities.ClaimRequest;
 import com.wfld.claims.demo.claim.entities.ClaimResponse;
 import com.wfld.claims.demo.claim.entities.ClaimStatus;
-import com.wfld.claims.demo.claim.entities.ClaimRequest;
+import com.wfld.claims.demo.claim.entities.ClaimDTO;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
+import java.time.LocalDateTime;
 
 @Configuration
 public class TestConfig {
@@ -19,7 +21,10 @@ public class TestConfig {
         return new ClaimService(null, null) {
             @Override
             public Mono<ClaimResponse> createClaim(ClaimRequest claimRequest) {
-                return Mono.just(new ClaimResponse(null, new ClaimStatus(1L, "NEW", "New Claim", true)));
+                ClaimDTO claimDTO = new ClaimDTO(claimRequest);
+                claimDTO.setId(1L);
+                ClaimStatus status = new ClaimStatus(1L, "NEW", "New Claim", true);
+                return Mono.just(new ClaimResponse(claimDTO, status));
             }
             
             @Override
