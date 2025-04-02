@@ -6,6 +6,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.wfld.claims.demo.claim.entities.ClaimRequest;
+import com.wfld.claims.demo.claims.config.TestConfig;
+import com.wfld.claims.demo.claims.config.TestSecurityConfig;
 import com.wfld.claims.demo.claim.controllers.ClaimController;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;

@@ -1,4 +1,4 @@
-package com.wfld.claims.demo.claims;
+package com.wfld.claims.demo.claims.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
