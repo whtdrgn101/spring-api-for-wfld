@@ -11,6 +11,10 @@ import org.springframework.security.oauth2.client.registration.InMemoryReactiveC
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.springframework.http.HttpStatus;
+import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -27,14 +31,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        ServerAuthenticationEntryPoint entryPoint = new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED);
+        
         http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .exceptionHandling(handling -> handling
+                .authenticationEntryPoint(entryPoint)
+                .accessDeniedHandler((exchange, denied) -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return Mono.empty();
+                })
+            )
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers("/actuator/health", "/heartbeat").permitAll()
                 .anyExchange().authenticated()
             )
-            .oauth2Client(oauth2 -> oauth2
-                .clientRegistrationRepository(clientRegistrationRepository())
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwkSetUri(issuerUri + "/pf/JWKS"))
             );
         
         return http.build();
@@ -47,13 +60,8 @@ public class SecurityConfig {
             .clientSecret(clientSecret)
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-            .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
             .scope("openid", "profile", "email", "can-request-claims", "can-submit-claims")
-            .authorizationUri(issuerUri + "/as/authorization.oauth2")
             .tokenUri(issuerUri + "/as/token.oauth2")
-            .userInfoUri(issuerUri + "/idp/userinfo.openid")
-            .userNameAttributeName("sub")
-            .jwkSetUri(issuerUri + "/pf/JWKS")
             .clientName("PingFederate")
             .build();
 
